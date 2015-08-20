@@ -42,6 +42,18 @@ app.use(function(req, res, next) {
   next();
 });
 
+app.use(function(req, res, next) {
+  var miliSecondsNow = new Date().getTime();
+  var miliSecondsLastInteraction = req.session.miliSecondsLastInteraction || 0;
+  var miliSecondsExpired = 2*60*1000;
+  var miliSecondsAfter = miliSecondsNow-miliSecondsLastInteraction;
+
+  if (miliSecondsAfter>miliSecondsExpired) {
+    delete req.session.user;
+  }
+  req.session.miliSecondsLastInteraction = miliSecondsNow;
+  next();
+});
 app.use('/', routes);
 //app.use('/users', users);
 
